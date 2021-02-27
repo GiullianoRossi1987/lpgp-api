@@ -71,32 +71,32 @@ class ExternalConfigurations{
 
     public function getMysqlData(): array{
         if(!$this->gotConfig) throw new ConfigurationsNotLoaded();
-        else return $this->mainConfig["mysqli"];
+        else return $this->mainConfig["mysql"];
     }
 
     public function getMysqlUser(): string{
         if(!$this->gotConfig) throw new ConfigurationsNotLoaded();
-        else return $this->mainConfig["mysqli"]["sysuser"];
+        else return $this->mainConfig["mysql"]["sysuser"];
     }
 
     public function getMysqlPasswd(): string{
         if(!$this->gotConfig) throw new ConfigurationsNotLoaded();
-        else return $this->mainConfig["mysqli"]["passwd"];
+        else return $this->mainConfig["mysql"]["passwd"];
     }
 
     public function getMysqlDB(): string{
         if(!$this->gotConfig) throw new ConfigurationsNotLoaded();
-        else return $this->mainConfig["mysqli"]["db"];
+        else return $this->mainConfig["mysql"]["db"];
     }
 
     public function getNormalClientAccess(): array{
         if(!$this->gotConfig) throw new ConfigurationsNotLoaded();
-        else return $this->mainConfig["mysqli"]["ext_normal"];
+        else return $this->mainConfig["mysql"]["ext_normal"];
     }
 
     public function getRootClientAccess(): array{
         if(!$this->gotConfig) throw new ConfigurationsNotLoaded();
-        else return $this->mainConfig["mysqli"]["ext_root"];
+        else return $this->mainConfig["mysql"]["ext_root"];
     }
 
     // SETTERS
@@ -104,19 +104,19 @@ class ExternalConfigurations{
     public function setMysqlUser(string $value): void{
         if(!$this->gotConfig) throw new ConfigurationsNotLoaded();
         if($this->writingProtection) throw new WriteProtectionError();
-        $this->mainConfig["mysqli"]["sysuser"] = $value;
+        $this->mainConfig["mysql"]["sysuser"] = $value;
     }
 
     public function setMysqlPasswd(string $value): void{
         if(!$this->gotConfig) throw new ConfigurationsNotLoaded();
         if($this->writingProtection) throw new WriteProtectionError();
-        $this->mainConfig["mysqli"]["passwd"] = $value;
+        $this->mainConfig["mysql"]["passwd"] = $value;
     }
 
     public function setMysqlDB(string $value): void{
         if(!$this->gotConfig) throw new ConfigurationsNotLoaded();
         if($this->writingProtection) throw new WriteProtectionError();
-        $this->mainConfig["mysqli"]["db"] = $value;
+        $this->mainConfig["mysql"]["db"] = $value;
     }
 
     public function setNormalClientAccess(array $value): void{

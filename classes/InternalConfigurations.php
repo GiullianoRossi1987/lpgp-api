@@ -12,34 +12,46 @@ class InternalConfigurations{
     private $logsPath = null;
     private $configPath = null;
     private $libPath = null;
-    private $document = new DOMDocument("1.0", "utf-8");
+    private $document = null;
     private $configLoaded = null;
     private $gotConfig = false;
     private $readonly = false;
+    private $root_element = null;
 
     private function parse(): void{
         if(!$this->gotConfig) throw new ConfigurationsNotLoaded();
-        $this->logsPath = $this->document->getElementsByTagName("logsPath")->item(0)->nodeValue;
-        $this->libPath = $this->document->getElementsByTagName("libPath")->item(0)->nodeValue;
-        $this->configPath = $this->document->getElementsByTagName("configPath")->item(0)->nodeValue;
+        $this->logsPath = $this->root_element->getElementsByTagName("logsPath")->item(0)->getAttribute("value");
+        $this->libPath = $this->root_element->getElementsByTagName("libPath")->item(0)->getAttribute("value");
+        $this->configPath = $this->root_element->getElementsByTagName("configPath")->item(0)->getAttribute("value");
     }
 
     private function dump(bool $save = true): void{
         if(!$this->gotConfig) throw new ConfigurationsNotLoaded();
         if($this->readonly) throw new WriteProtectionError();
-        $this->document->getElementsByTagName("logsPath")->item(0)->nodeValue = $this->logsPath;
-        $this->document->getElementsByTagName("configPath")->item(0)->nodeValue = $this->configPath;
-        $this->document->getElementsByTagName("libPath")->item(0)->nodeValue = $this->libPath;
+        $this->root_element->getElementsByTagName("logsPath")->item(0)->setAttribute("value", $this->logsPath);
+        $this->root_element->getElementsByTagName("configPath")->item(0)->setAttribute("value", $this->configPath);
+        $this->root_element->getElementsByTagName("libPath")->item(0)->setAttribute("value", $this->libPath);
+        $this->document->document->replaceChild($this->document->getElementsByTagName("config")->item(0), $this->root_element);
         if($save) $this->document->save($this->configLoaded);
+    }
+
+    public function getDOM(): DOMDocument{
+        return $this->document;
     }
 
     public function load(string $config, bool $protected = true): void{
         if($this->gotConfig) throw new ConfigurationsFileLoaded();
+        $this->document = new DOMDocument("1.0", "utf-8");
         $this->document->load($config);
+        $this->root_element = $this->document->getElementsByTagName("config")->item(0);
         $this->configLoaded = $config;
         $this->readonly = $protected;
         $this->gotConfig = true;
-        parse();
+        $this->parse();
+    }
+
+    public function __construct(string $config, bool $protected = true){
+        $this->load($config, $protected);
     }
 
     public function close(): void{
@@ -48,8 +60,8 @@ class InternalConfigurations{
         $this->configLoaded = null;
         $this->readonly = false;
         $this->gotConfig = false;
-        $this->logsPath = nul
-        $this->libPath = null
+        $this->logsPath = null;
+        $this->libPath = null;
         $this->configPath = null;
     }
 
