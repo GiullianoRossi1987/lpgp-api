@@ -2,10 +2,11 @@
 namespace Config;
 require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/exceptions/config_exceptions.php";
 require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/i_FileReader.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/logs-system.php";
 
-use DOMDocument;
-use DOMNode;
-use DOMNodelist;
+use \DOMDocument;
+use \DOMNode;
+use \DOMNodelist;
 use General\iFileReader;
 
 if(!defined("API_CONFIG_PATH")) define("API_CONFIG_PATH", $_SERVER["DOCUMENT_ROOT"] . "/config/config.xml");
@@ -18,10 +19,10 @@ if(!defined("API_CONFIG_PATH")) define("API_CONFIG_PATH", $_SERVER["DOCUMENT_ROO
 class InternalConfigurations implements iFileReader{
 
     // base attributes
-    private $configFile;
+    private $configFile = "";
     private $gotConfig = false;
-    private $DOMReader;
-    private $root;
+    private $DOMReader = null;
+    private $root = null;
 
     // configurations attributes
     private $ext_config   = "";
@@ -35,23 +36,17 @@ class InternalConfigurations implements iFileReader{
     const GENERAL_LOGS_NAME = "gen_logs_path";
 
     /**
-     * Static function to generate a general DOMDocument class instance/object
-     * used inside of the class.
-     * @return DOMDocument
-     */
-    public static function genDOM(): DOMDocument{ return new DOMDocument("1.0", "utf-8"); }
-
-    /**
      * Loads the attributes of the configurations file loaded and sets them to
      * a associative array on attribute $configurations.
      * @throws ConfigurationsNotLoaded If there's no configurations file loaded
      * @return void
      */
     private function parse(): void{
-        if(!$this->$gotConfig) throw new ConfigurationsNotLoaded();
-        $this->ext_config   = $this->root->getElementsByTagName(InternalConfigurations::EXT_CONFIG_NAME)->items(0)->getAttribute(InternalConfigurations::VALUE_ATTR_NAME);
-        $this->error_log    = $this->root->getElementsByTagName(InternalConfigurations::ERR_LOG_NAME)->items(0)->getAttribute(InternalConfigurations::VALUE_ATTR_NAME);
-        $this->general_logs = $this->root->getElementsByTagName(InternalConfigurations::GENERAL_LOGS_NAME)->items(0)->getAttribute(InternalConfigurations::VALUE_ATTR_NAME);
+        if(!$this->gotConfig) throw new ConfigurationsNotLoaded();
+        // die(var_dump($this->root->getElementsByTagName(InternalConfigurations::ERR_LOG_NAME)->item(0)));
+        $this->ext_config   = $this->root->getElementsByTagName(InternalConfigurations::EXT_CONFIG_NAME)->item(0)->getAttribute(InternalConfigurations::VALUE_ATTR_NAME);
+        $this->error_log    = $this->root->getElementsByTagName(InternalConfigurations::ERR_LOG_NAME)->item(0)->getAttribute(InternalConfigurations::VALUE_ATTR_NAME);
+        $this->general_logs = $this->root->getElementsByTagName(InternalConfigurations::GENERAL_LOGS_NAME)->item(0)->getAttribute(InternalConfigurations::VALUE_ATTR_NAME);
     }
 
     /**
@@ -70,10 +65,10 @@ class InternalConfigurations implements iFileReader{
      * @return void
      */
     public function load(string $file, $args = []): void{
-        if($this->$gotConfig) throw new ConfigurationsLoadedError();
-        $this->DOMReader = genDOM();
+        if($this->gotConfig) throw new ConfigurationsLoadedError();
+        $this->DOMReader = new DOMDocument("1.0", "utf-8");
         $this->DOMReader->load($file);
-        $root = $this->DOMReader->getElementsByTagName(InternalConfigurations::ROOT_NAME)->items(0);
+        $this->root = $this->DOMReader->getElementsByTagName(InternalConfigurations::ROOT_NAME)->item(0);
         $this->gotConfig = true;
         $this->configFile = $file;
         $this->parse();
@@ -91,13 +86,15 @@ class InternalConfigurations implements iFileReader{
      * @throws ConfigurationsNotLoaded If there's no configurations file loaded already
      * @return void
      */
-    public function dispose(){
+    public function dispose(): void{
         if(!$this->gotConfig) throw new ConfigurationsNotLoaded();
         $this->gotConfig = false;
         $this->DOMReader = null;
         $this->root = null;
         $this->unparse();
     }
+
+    public function gotFile(): bool{ return $this->gotFile; }
 
     /**
      * Writes the current data of the configurations attributes.
@@ -108,23 +105,24 @@ class InternalConfigurations implements iFileReader{
         if(!$this->gotConfig) throw new ConfigurationsNotLoaded();
 
         // External Configurations commit
-        $this->root->getElementsByTagName(InternalConfigurations::EXT_CONFIG_NAME)->setAttribute(
+        $this->root->getElementsByTagName(InternalConfigurations::EXT_CONFIG_NAME)->item(0)->setAttribute(
             InternalConfigurations::VALUE_ATTR_NAME,
             $this->ext_config
         );
         // General Logs Path Commit
-        $this->root->getElementsByTagName(InternalConfigurations::GENERAL_LOGS_NAME)->setAttribute(
+        $this->root->getElementsByTagName(InternalConfigurations::GENERAL_LOGS_NAME)->item(0)->setAttribute(
             InternalConfigurations::VALUE_ATTR_NAME,
             $this->general_logs
         );
         // Error Logs Commit
-        $this->root->getElementsByTagName(InternalConfigurations::ERR_LOG_NAME)->setAttribute(
+        $this->root->getElementsByTagName(InternalConfigurations::ERR_LOG_NAME)->item(0)->setAttribute(
             InternalConfigurations::VALUE_ATTR_NAME,
             $this->error_log
         );
         // sets the new child
-        $old_root = $this->DOMReader->getElementsByTagName(InternalConfigurations::ROOT_NAME)->items(0);
+        $old_root = $this->DOMReader->getElementsByTagName(InternalConfigurations::ROOT_NAME)->item(0);
         $this->DOMReader->replaceChild($old_root, $this->root);
+        $this->DOMReader->save($this->configFile);
         unset($old_root);
     }
 
