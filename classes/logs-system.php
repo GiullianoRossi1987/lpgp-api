@@ -2,10 +2,10 @@
 namespace LogsSystem;
 use Exception;
 try{
-    require_once $_SERVER["DOCUMENT_ROOT"] . "/core/Exceptions.php";
+    require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/exceptions/Exceptions.php";
 }
 catch(Exception $e){
-    require_once $_SERVER["DOCUMENT_ROOT"] . "/core/Exceptions.php";
+    require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/exceptions/Exceptions.php";
 }
 
 use LogsErrors\InvalidFile;

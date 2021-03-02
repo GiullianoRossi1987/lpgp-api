@@ -1,7 +1,7 @@
 <?php
 namespace Core;
-require_once $_SERVER["DOCUMENT_ROOT"] . "/core/Core.php";
-require_once $_SERVER["DOCUMENT_ROOT"] . "/core/Exceptions.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/Core.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/exceptions/Exceptions.php";
 
 use ClientsExceptions\AccountError;
 use ClientsExceptions\AuthenticationError as ClientAuthenticationError;

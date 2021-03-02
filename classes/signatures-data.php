@@ -1,8 +1,8 @@
 <?php
 namespace Core;
-require_once $_SERVER["DOCUMENT_ROOT"] . "/core/Core.php";
-require_once $_SERVER["DOCUMENT_ROOT"] . "/core/Exceptions.php";
-require_once $_SERVER["DOCUMENT_ROOT"] . "/core/control/controllers.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/Core.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/exceptions/Exceptions.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/control/controllers.php";
 
 use DatabaseActionsExceptions\AlreadyConnectedError;
 use DatabaseActionsExceptions\NotConnectedError;

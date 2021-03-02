@@ -1,8 +1,8 @@
 <?php
 namespace Control{
-    require_once $_SERVER["DOCUMENT_ROOT"] . "/core/Core.php";
-    require_once $_SERVER["DOCUMENT_ROOT"] . "/core/Exceptions.php";
-    require_once $_SERVER["DOCUMENT_ROOT"] . "/core/control/exceptions.php";
+    require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/Core.php";
+    require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/exceptions/Exceptions.php";
+    require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/control/exceptions.php";
 
     use Core\SignaturesData;
     use Core\UsersData;

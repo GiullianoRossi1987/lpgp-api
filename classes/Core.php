@@ -2,12 +2,12 @@
 namespace Core;
 use Exception;
 try{
-    require_once $_SERVER["DOCUMENT_ROOT"] . "/core/Exceptions.php";
-    require_once  "config/configmanager.php";
-    require_once  "core/control/controllers.php";
+    require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/exceptions/Exceptions.php";
+    // require_once  "config/configmanager.php";
+    require_once  "classes/control/controllers.php";
 }
 catch(Exception $e){
-    require_once $_SERVER['DOCUMENT_ROOT'] . "/core/Exceptions.php";
+    require_once $_SERVER['DOCUMENT_ROOT'] . "/classes/exceptions/Exceptions.php";
 }
 
 use mysqli;
@@ -70,7 +70,7 @@ define("EMAIL_USING", "lpgp@gmail.com");
 define("DEFAULT_USER_ICON", "/media/user-icon.png");
 define("DEFAULT_DATETIME_F", "Y-m-d H:i:s");
 define("LPGP_CONF", $gblConfig->getConfig());
-define("CONTROL_FILE", "core/control/control.json");
+define("CONTROL_FILE", "/control/control.json");
 
 
 // Clients constants
@@ -150,7 +150,7 @@ class DatabaseConnection{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 namespace templateSystem;
-require_once $_SERVER["DOCUMENT_ROOT"] . "/core/Exceptions.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/exceptions/Exceptions.php";
 
 use ExctemplateSystem\AlreadyLoadedFile;
 use ExctemplateSystem\InvalidFileType;

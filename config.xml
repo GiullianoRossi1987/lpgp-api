@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<config>
-    <libPath value="/home/giulliano/Projetos/lpgp-new/core/"/>
-    <configPath value="/home/giulliano/Projetos/lpgp-new/config/mainvars.json"/>
-    <logsPath value="logs/"/>
-</config>
