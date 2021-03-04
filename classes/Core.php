@@ -64,7 +64,7 @@ use Control\ClientsController;
 use Control\SignaturesController;
 
 $ico = new InternalConfigurations($_SERVER["DOCUMENT_ROOT"] . "/config/config.xml");
-$gblConfig = new WebsiteConfigurations($_SERVER["DOCUMENT_ROOT"]. "/config/mainvars.json");
+$gblConfig = new WebsiteConfigurations($ico->getExternalConfigurations());
 
 define("DEFAULT_HOST", "127.0.0.1");
 define("DEFAULT_DB", "LPGP_WEB");
