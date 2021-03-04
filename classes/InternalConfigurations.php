@@ -1,12 +1,13 @@
 <?php
 namespace Config;
 require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/exceptions/config_exceptions.php";
-require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/i_FileReader.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/interfaces/i_FileReader.php";
 require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/logs-system.php";
 
 use \DOMDocument;
 use \DOMNode;
 use \DOMNodelist;
+use \DOMElement;
 use General\iFileReader;
 
 if(!defined("API_CONFIG_PATH")) define("API_CONFIG_PATH", $_SERVER["DOCUMENT_ROOT"] . "/config/config.xml");
@@ -15,6 +16,23 @@ if(!defined("API_CONFIG_PATH")) define("API_CONFIG_PATH", $_SERVER["DOCUMENT_ROO
  * <Class> This class manages the configurations file of the API server,
  * this file contains the location of the external configurations file,
  * and other important paths to the API server.
+ *
+ * @var string $configFile Path to the configurations file loaded;
+ * @var boolean $gotConfig If the class have a configurations file loaded.
+ * @var DOMDocument $DOMReader The XML files reader class
+ * @var DOMElement  $root The object with the configurations
+ *
+ * Attributes for the configurations loaded
+ * @var string $ext_config The website configurations file path, from the LPGP Server
+ * @var string $error_log Path to the error logs file of the LPGP API Server
+ * @var string $general_logs Path to the logs folder of the API Server
+ *
+ * Constants
+ * @var VALUE_ATTR_NAME The name of the default attribute for the XML elements value.
+ * @var ROOT_NAME The name of the root XML element
+ * @var EXT_CONFIG_NAME The name of the external configurations XML element
+ * @var ERR_LOG_NAME The name of the error logs file path XML element
+ * @var GENERAL_LOGS_NAME The name of the general logs folder path XML element 
  */
 class InternalConfigurations implements iFileReader{
 

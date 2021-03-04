@@ -3,8 +3,9 @@ namespace Core;
 use Exception;
 try{
     require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/exceptions/Exceptions.php";
-    // require_once  "config/configmanager.php";
-    require_once  "classes/control/controllers.php";
+    require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/control/controllers.php";
+    require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/InternalConfigurations.php";
+    require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/WebSiteConfigurations.php";
 }
 catch(Exception $e){
     require_once $_SERVER['DOCUMENT_ROOT'] . "/classes/exceptions/Exceptions.php";
@@ -57,11 +58,13 @@ use ClientsAccessExceptions\SuccessValueError;
 
 use ZipArchive;
 
-use Configurations\ConfigManager;
+use Config\WebSiteConfigurations;
+use Config\InternalConfigurations;
 use Control\ClientsController;
 use Control\SignaturesController;
 
-$gblConfig = new ConfigManager($_SERVER["DOCUMENT_ROOT"]. "/config/mainvars.json");
+$ico = new InternalConfigurations($_SERVER["DOCUMENT_ROOT"] . "/config/config.xml");
+$gblConfig = new WebsiteConfigurations($_SERVER["DOCUMENT_ROOT"]. "/config/mainvars.json");
 
 define("DEFAULT_HOST", "127.0.0.1");
 define("DEFAULT_DB", "LPGP_WEB");
