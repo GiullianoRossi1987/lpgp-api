@@ -18,7 +18,7 @@ fi
 if [ -a "config/config.xml" ]; then
 	echo -e "Seems you don't have to generate a configurations file too, awesome!"
 else
-	touch config/config.xml
+	mkdir config && touch config/config.xml
 	XML_STRC="""
 <?xml version="1.0" encoding=\"UTF-8\"?>
 <api_config>
