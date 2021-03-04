@@ -6,6 +6,7 @@ use Exception;
 use General\iFileReader;
 
 /**
+ * <Class <iFileReader>
  * Class created to manage the configurations from the website folder.
  * Remembering that to use the LPGP API Server you must have the LPGP Server
  * installed too. To learn more about the configurations file of the WebSite

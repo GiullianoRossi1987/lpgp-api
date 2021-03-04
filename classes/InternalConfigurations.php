@@ -13,7 +13,7 @@ use General\iFileReader;
 if(!defined("API_CONFIG_PATH")) define("API_CONFIG_PATH", $_SERVER["DOCUMENT_ROOT"] . "/config/config.xml");
 
 /**
- * <Class> This class manages the configurations file of the API server,
+ * <Class <iFileReader> > This class manages the configurations file of the API server,
  * this file contains the location of the external configurations file,
  * and other important paths to the API server.
  *
@@ -32,7 +32,7 @@ if(!defined("API_CONFIG_PATH")) define("API_CONFIG_PATH", $_SERVER["DOCUMENT_ROO
  * @var ROOT_NAME The name of the root XML element
  * @var EXT_CONFIG_NAME The name of the external configurations XML element
  * @var ERR_LOG_NAME The name of the error logs file path XML element
- * @var GENERAL_LOGS_NAME The name of the general logs folder path XML element 
+ * @var GENERAL_LOGS_NAME The name of the general logs folder path XML element
  */
 class InternalConfigurations implements iFileReader{
 
