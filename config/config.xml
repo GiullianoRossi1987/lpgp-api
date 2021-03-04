@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <api_config>
-    <ext_config value=""/>
-    <gen_logs_path value=""/>
-    <error_log_path value=""/>
-</ap_config>
+    <ext_config value="/home/giulliano/Projetos/lpgp-new/config/mainvars.json"/>
+    <gen_logs_path value="logs/"/>
+    <error_log_path value="logs/error.log"/>
+</api_config>
