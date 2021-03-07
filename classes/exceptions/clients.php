@@ -27,7 +27,7 @@ class ClientLoggedError extends Exception{
  * <Exception> Thrown when the client token isn't valid, it means that it doesn't
  * match with the token of the referred client on the database.
  */
-class LoginTolkenError extends Exception{
+class LoginTokenError extends Exception{
     public function __construct($client){
         parent::__construct("Login error, invalid token for client #$client");
     }
