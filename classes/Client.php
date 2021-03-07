@@ -147,4 +147,21 @@ class Client{
         if(!$this->logged) throw enw ClientNotLogged();
         else return $this->clientData;
     }
+
+    /**
+     * Returns the access to the database, username and password, considering
+     * the client mode, if it's a root client it'll return the access as a root
+     * client: LPGP_CONF["ext_root"]. But if it's a normal client only will return
+     * the access to the normal access account LPGP_CONF["ext_normal"];
+     * It returns two items in array: 0 => username and 1 => password.
+     * @throws ClientNotLogged If there's no client logged
+     * @return array size 2
+     */
+    public function getDatabaseAccess(): array{
+        if(!$this->logged) throw enw ClientNotLogged();
+        else
+            return $this->rootClient ? LPGP_CONF["ext_root"] : LPGP_CONF["ext_normal"];
+    }
+
+    
 }
