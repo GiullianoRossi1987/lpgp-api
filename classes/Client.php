@@ -34,9 +34,10 @@ class Client{
     private $rootClient = null;
     private $clientData = null;
 
-    const ENC_ID_NAME = "id_client";
-    const ENC_TK_NAME = "tk_client";
-    const LOGS_PATH   = $_SERVER["DOCUMENT_ROOT"] . "/logs/hall.log";
+    const ENC_ID_NAME = "Client";
+    const ENC_TK_NAME = "Token";
+    const LOGS_PATH   = "../logs/hall.log";
+    const DELIMITER   = "/";
 
     /**
      * Decrypt a LPGP style encrypted string, that's similar to '123/145/65/2/35/6/7', for example
@@ -45,7 +46,9 @@ class Client{
      */
     public static function decodeLPGP(string $lpgp_data): array{
         $json = "";
-        foreach($lpgp_data as $chr) $json .= chr((int)$chr);
+        $exploded = explode(self::DELIMITER, str_replace("\n", "", $lpgp_data));
+        foreach($exploded as $chr)
+            $json .= chr((int)$chr);
         return json_decode($json, true);
     }
 
@@ -54,7 +57,7 @@ class Client{
      * @param integer $client The client that logged in
      * @return void
      */
-    private void log_login(int $client): void{
+    private function log_login(int $client): void{
         $logger = new Logger(Client::LOGS_PATH);
         $logger->addLine("Client $client logged", true);
         unset($logger);
@@ -71,9 +74,10 @@ class Client{
      */
     public function login(int $client, string $token): void{
         if($this->logged) throw new ClientLoggedError();
+        $log = new Logger("../logs/debug.log");
         $hdl_data = new ClientsData(LPGP_CONF["mysql"]["sysuser"], LPGP_CONF["mysql"]["passwd"]);
         if(!$hdl_data->checkClientExists($client)) throw new ClientNotFound("There's no client #$client");
-        $data = $hdl_data->fastQuery(array("cd_client" => $client));
+        $data = $hdl_data->fastQuery(array("cd_client" => $client))[0];
         if($data["tk_client"] != $token) throw new LoginTokenError($client);
         // if it's a valid token does the login
         $this->logged = true;
@@ -113,7 +117,7 @@ class Client{
      * @throws ClientNotLogged If there's no client logged already
      * @return void
      */
-    public funciton logoff(): void{
+    public function logoff(): void{
         if(!$this->logged) throw new ClientNotFound();
         $this->client = null;
         $this->clientData = null;
@@ -144,7 +148,7 @@ class Client{
      * @return array
      */
     public function getLoggedData(): array{
-        if(!$this->logged) throw enw ClientNotLogged();
+        if(!$this->logged) throw new ClientNotLogged();
         else return $this->clientData;
     }
 
@@ -158,10 +162,10 @@ class Client{
      * @return array size 2
      */
     public function getDatabaseAccess(): array{
-        if(!$this->logged) throw enw ClientNotLogged();
+        if(!$this->logged) throw new ClientNotLogged();
         else
             return $this->rootClient ? LPGP_CONF["ext_root"] : LPGP_CONF["ext_normal"];
     }
 
-    
+
 }
