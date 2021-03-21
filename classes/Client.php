@@ -38,6 +38,7 @@ class Client{
     const ENC_TK_NAME = "Token";
     const LOGS_PATH   = "../logs/hall.log";
     const DELIMITER   = "/";
+    const COOKIE_NAME = "client";
 
     /**
      * Decrypt a LPGP style encrypted string, that's similar to '123/145/65/2/35/6/7', for example
@@ -74,7 +75,6 @@ class Client{
      */
     public function login(int $client, string $token): void{
         if($this->logged) throw new ClientLoggedError();
-        $log = new Logger("../logs/debug.log");
         $hdl_data = new ClientsData(LPGP_CONF["mysql"]["sysuser"], LPGP_CONF["mysql"]["passwd"]);
         if(!$hdl_data->checkClientExists($client)) throw new ClientNotFound("There's no client #$client");
         $data = $hdl_data->fastQuery(array("cd_client" => $client))[0];
@@ -166,6 +166,5 @@ class Client{
         else
             return $this->rootClient ? LPGP_CONF["ext_root"] : LPGP_CONF["ext_normal"];
     }
-
 
 }
