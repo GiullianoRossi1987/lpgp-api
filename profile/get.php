@@ -1,11 +1,13 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET");
-header("Access-Control-Allow-Headers: X-Requested-With");
+header('Access-Control-Allow-Headers: Access-Control-Allow-Origin, Content-Type, X-Requested-With');
+header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header('Content-Type: application/json, charset=utf-8');
+
 require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/Client.php";
-require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/usr-data.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/users-data.php";
 require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/proprietaries-data.php";
-require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/exceptions/Exceptions.php"
+require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/exceptions/Exceptions.php";
 
 use Clients\Client;
 use Core\UsersData;
@@ -52,8 +54,10 @@ if(isset($_GET["client-key"])){
     // proceed to the other methods
     if(isset($_GET["prop-key"])){
         // uses the proprietary authentication,
-        $prp_obj = new ProprietariesData($login_data[0], $login_data[1]); 
+        $prp_obj = new ProprietariesData($login_data[0], $login_data[1]);
     }
 }
-
+else if(isset($_GET["info"])) die(json_encode(array(
+    "Sysdone" => 0
+)));
 ?>
