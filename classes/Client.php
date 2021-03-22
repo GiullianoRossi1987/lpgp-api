@@ -164,7 +164,7 @@ class Client{
     public function getDatabaseAccess(): array{
         if(!$this->logged) throw new ClientNotLogged();
         else
-            return $this->rootClient ? LPGP_CONF["ext_root"] : LPGP_CONF["ext_normal"];
+            return $this->rootClient ? LPGP_CONF["mysql"]["ext_root"] : LPGP_CONF["mysql"]["ext_normal"];
     }
 
 }

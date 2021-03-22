@@ -1,4 +1,5 @@
 <?php
+// default header to work
 header('Access-Control-Allow-Headers: Access-Control-Allow-Origin, Content-Type, X-Requested-With');
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
@@ -17,8 +18,8 @@ use Core\ProprietariesData;
 use ClientsExceptions\AccountError;
 use ClientsExceptions\ClientNotFound;
 use ClientsExceptions\ProprietaryReferenceError;
-use ClientsExceptions\TokenReferenceError;
 // proprietaries exceptions
+use ClientsExceptions\TokenReferenceError;
 use ProprietariesExceptions\ProprietaryNotFound;
 use ProprietariesExceptions\AuthenticationError;
 // users exceptions
@@ -55,7 +56,24 @@ if(isset($_GET["client-key"])){
     if(isset($_GET["prop-key"])){
         // uses the proprietary authentication,
         $prp_obj = new ProprietariesData($login_data[0], $login_data[1]);
+        $data = $prp_obj->fastQuery(array(
+            "vl_key" => $_GET["prop-key"]
+        ));
+        count($data) == 1 ? $data["status"] = 0 : $data[0] = array("status" => 1, "error" => "Invalid proprietary key");
+        die(json_encode($data));
     }
+    else if(isset($_GET["user-key"])){
+        $usr_obj = new UsersData($login_data[0], $login_data[1]);
+        $data = $usr_obj->fastQuery(array(
+            "vl_key" => $_GET["prop-key"]
+        ));
+        count($data) == 1 ? $data["status"] = 0 : $data[0] = array("status" => 1, "error" => "Invalid user key");
+        die(json_encode($data));
+    }
+    else die(json_encode(array(
+        "status" => 1,
+        "error" => "Key not referred in the options of the URL"
+    )));
 }
 else if(isset($_GET["info"])) die(json_encode(array(
     "Sysdone" => 0
