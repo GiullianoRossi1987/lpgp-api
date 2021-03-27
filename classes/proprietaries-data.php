@@ -179,6 +179,11 @@ class ProprietariesData extends DatabaseConnection{
     public function delProprietary(string $proprietary){
         $this->checkNotConnected();
         if(!$this->checkProprietaryExists($proprietary)) throw new ProprietaryNotFound("There's no proprietary account '$proprietary'", 1);
+        $qr_id = $this->connection->query("SELECT cd_proprietary FROM tb_proprietaries WHERE nm_proprietary = \"$proprietary\";");
+        $id = (int)$qr_id->fetch_array()["cd_proprietary"];
+        $qr_sig = $this->connection->query("DELETE FROM tb_signatures WHERE cd_proprietary = $id");
+        $qr_cla = $this->connection->query("DELETE FROM tb_access WHERE id_client = (SELECT cd_client FROM tb_clients WHERE id_proprietary = $id);");
+        $qr_cli = $this->connection->query("DELETE FROM tb_clients WHERE cd_proprietary = $id; ");
         $qr_del = $this->connection->query("DELETE FROM tb_proprietaries WHERE nm_proprietary = \"$proprietary\";");
         unset($qr_del);
      }

@@ -6,6 +6,7 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/clients-access-data.php";
 require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/Core.php";
 require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/exceptions/Exceptions.php";
 require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/logger.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/proprietaries-data.php";
 
 use Core\ClientsData;
 use Core\ClientsAccessData;
@@ -13,6 +14,7 @@ use ClientsExceptions\AccountError;
 use ClientsExceptions\ClientNotFound;
 use ClientsExceptions\ProprietaryReferenceError;
 use ClientsExceptions\TokenReferenceError;
+use Core\ProprietariesData;
 use Logs\Logger;
 
 /**
@@ -26,6 +28,7 @@ use Logs\Logger;
  * @var integer|null $client The client primary key reference from the database
  * @var boolean|null $rootClient If the logged client have root permissions
  * @var array|null $clientData All the data about the logged client
+ * @var array|null $proprietary The client's proprietary data
  */
 class Client{
     private $logged = false;
@@ -33,6 +36,7 @@ class Client{
     private $client = null;
     private $rootClient = null;
     private $clientData = null;
+    private $proprietary = null;
 
     const ENC_ID_NAME = "Client";
     const ENC_TK_NAME = "Token";
@@ -76,6 +80,7 @@ class Client{
     public function login(int $client, string $token): void{
         if($this->logged) throw new ClientLoggedError();
         $hdl_data = new ClientsData(LPGP_CONF["mysql"]["sysuser"], LPGP_CONF["mysql"]["passwd"]);
+        $hdl_prp = new ProprietariesData(LPGP_CONF["mysql"]["sysuser"], LPGP_CONF["mysql"]["passwd"]);
         if(!$hdl_data->checkClientExists($client)) throw new ClientNotFound("There's no client #$client");
         $data = $hdl_data->fastQuery(array("cd_client" => $client))[0];
         if($data["tk_client"] != $token) throw new LoginTokenError($client);
@@ -85,6 +90,7 @@ class Client{
         $this->client = $client;
         $this->rootClient = (bool)$data["vl_root"];
         $this->token = $token;
+        $this->proprietary = $hdl_prp->fastQuery(array("cd_proprietary" => $data["id_proprietary"]));
         $this->log_login($client);
     }
 
@@ -167,4 +173,20 @@ class Client{
             return $this->rootClient ? LPGP_CONF["mysql"]["ext_root"] : LPGP_CONF["mysql"]["ext_normal"];
     }
 
+    /**
+     * Returns if the client logged is or not a root type client
+     * Used for verify the permissions of the client before doing any action
+     * @return boolean
+     */
+    public function isRoot(): boolean{ return $this->rootClient; }
+
+    /**
+     * Returns the data of the client's proprietary
+     * @throws ClientNotLogged If there's no client logged
+     * @return array
+     */
+    public function getPropData(): array{
+        if(!$this->logged) throw new ClientNotLogged();
+        else return $this->proprietary;
+    }
 }
