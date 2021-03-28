@@ -22,6 +22,12 @@ use ProprietariesExceptions\AuthenticationError;
 // signatures exceptions
 use SignaturesExceptions\SignatureNotFound;
 
+/**
+ * Decodes a LPGP string and fetchs the array of it.
+ * @param string $lpgp The LPGP string
+ * @return array
+ */
+
 function decodeLPGP(string $lpgp): array{
     $jsonCont = "";
     $exp = explode(SignaturesData::DELIMITER, $lpgp);
@@ -58,15 +64,26 @@ if(isset($_GET["client-key"])){
     $sig = new SignaturesData($login_data[0], $login_data[1]);
     // proceed to the other methods
     if(isset($_GET["signature"])){
-        $cd_signature = 0;
-        if(isset($_GET["key-mode"]))
-            $cd_signature = (int)decodeLPGP($_GET["signature"])["ID"];
-        else
-            $cd_signature = (int)$_GET["signature"];
-        $sig_data = $sig->fastQuery(array(
-            "cd_signature" => $cd_signature
-        ));
-        die(json_encode($sig_data[0]));
+        try{
+            $cd_signature = 0;
+            if(isset($_GET["key-mode"]))
+                $cd_signature = (int)decodeLPGP($_GET["signature"])["ID"];
+            else
+                $cd_signature = (int)$_GET["signature"];
+            $sig_data = $sig->fastQuery(array(
+                "cd_signature" => $cd_signature
+            ));
+            die(json_encode(array(
+                "status" => 0,
+                "signature" => $sig_data[0]
+            )));
+        }
+        catch(Exception $e){
+            die(json_encode(array(
+                "status" => 2,
+                "error" => $e->getMessage()
+            )))
+        }
     }
 
 }
