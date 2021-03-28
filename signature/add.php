@@ -19,21 +19,7 @@ use Core\SignaturesData;
 use ClientsExceptions\TokenReferenceError;
 use ProprietariesExceptions\ProprietaryNotFound;
 use ProprietariesExceptions\AuthenticationError;
-// signatures exceptions
-use SignaturesExceptions\SignatureNotFound;
 
-/**
- * Decodes a LPGP string and fetchs the array of it.
- * @param string $lpgp The LPGP string
- * @return array
- */
-
-function decodeLPGP(string $lpgp): array{
-    $jsonCont = "";
-    $exp = explode(SignaturesData::DELIMITER, $lpgp);
-    foreach($exp as $chr) $jsonCont .= chr((int)$chr);
-    return json_decode($jsonCont, true);
-}
 
 if(isset($_GET["client-key"])){
     $cl_obj = new Client();
@@ -63,22 +49,23 @@ if(isset($_GET["client-key"])){
     $login_data = $cl_obj->getDatabaseAccess();
     $sig = new SignaturesData($login_data[0], $login_data[1]);
     // proceed to the other methods
-    if(isset($_GET["signature"])){
-        try{
-            $cd_signature = 0;
-            if(isset($_GET["key-mode"]))
-                $cd_signature = (int)decodeLPGP($_GET["signature"])["ID"];
-            else
-                $cd_signature = (int)$_GET["signature"];
-            $sig_data = $sig->fastQuery(array(
-                "cd_signature" => $cd_signature
-            ));
+    if(isset($_GET["add"])){
+        try {
+            $to_add = json_decode($_GET["add"], true);
+            $id_code = 0;
+            for($i = 0; $i < count(SignaturesData::CODES); ++$i){
+                if($to_add["hash"] == SignaturesData::CODES[$i]){
+                    $id_code = $i;
+                    break;
+                }
+            }
+            $sig->addSignature($cl_obj->getPropData()["cd_proprietary"], $to_add["password"], $id_code, $to_add["encode"]);
             die(json_encode(array(
                 "status" => 0,
-                "signature" => $sig_data[0]
+                "message" => "Signature Created"
             )));
         }
-        catch(Exception $e){
+        catch (\Exception $e) {
             die(json_encode(array(
                 "status" => 2,
                 "error" => $e->getMessage()
