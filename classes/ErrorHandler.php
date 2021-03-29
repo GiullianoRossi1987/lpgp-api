@@ -79,14 +79,15 @@ class ErrorHandler{
      * @throws LogsFileNotLoaded If there's no logs file loaded yet
      * @return string The JSON encoded content.
      */
-    public function throwError(int $status = ErrorHandler::NON_ERR_CODE, string $error): string{
+    public function throwError(int $status = ErrorHandler::NON_ERR_CODE, string $error, ?string $client = null): string{
+        $error .= is_null($client) ? " " : " [client::$client]";
         $content = array(
             "status" => $status,
             "error" => $error
         );
         if($status != self::NON_ERR_CODE){
             if(!$this->gotLogs) throw new LogsFileNotLoaded();
-            $this->writer->addLine("ERR $status -> $error", true);
+            $this->writer->addLine("ERR $status -> " . $content["error"], true);
         }
         return json_encode($content);
     }
