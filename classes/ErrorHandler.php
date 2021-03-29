@@ -80,7 +80,7 @@ class ErrorHandler{
      * @return string The JSON encoded content.
      */
     public function throwError(int $status = ErrorHandler::NON_ERR_CODE, string $error, ?string $client = null): string{
-        $error .= is_null($client) ? " " : " [client::$client]";
+        $error .= is_null($client) || $status == self::NON_ERR_CODE ? " " : " [client::$client]";
         $content = array(
             "status" => $status,
             "error" => $error
