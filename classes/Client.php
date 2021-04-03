@@ -178,7 +178,7 @@ class Client{
      * Used for verify the permissions of the client before doing any action
      * @return boolean
      */
-    public function isRoot(): boolean{ return $this->rootClient; }
+    public function isRoot(): bool{ return $this->rootClient; }
 
     /**
      * Returns the data of the client's proprietary

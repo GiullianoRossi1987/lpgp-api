@@ -187,7 +187,28 @@ class SignaturesData extends DatabaseConnection{
         if(!$this->checkSignatureExists((int) $json_arr['ID'])) throw new SignatureNotFound("There's no signature #" . $json_arr['Signature'], 1);
         $signautre_data = $this->connection->query("SELECT vl_password FROM tb_signatures WHERE cd_signature = " . $json_arr['ID'])->fetch_array();
         if($signautre_data['vl_password'] != $json_arr['Signature']) throw new SignatureAuthError("The file signature is not valid.", 1);
+        return true;
+    }
 
+    /**
+     * Authenticates the content of a LPGP file, used only to the API propourse
+     * @param string $content The LPGP file content encoded as well
+     * @throws SignatureNotFound If the signature referred in the LPGP string doesn't exists
+     * @throws SignatureAuthError If there's a error during the authentication process
+     * @return boolean
+     */
+    public function checkSignatureString(string $content): bool{
+        $this->checkNotConnected();
+        $sp_content = explode(self::DELIMITER, $content);
+        $ascii_none = [];
+        for($i = 0; $i < count($sp_content); $i++){
+            $ascii_none[] = chr((int) $sp_content[$i]);
+        }
+        $ascii_none_str = implode("", $ascii_none);
+        $json_arr = json_decode(preg_replace("/[[[:cntrl:]]/", "", $ascii_none_str), true);
+        if(!$this->checkSignatureExists((int) $json_arr['ID'])) throw new SignatureNotFound("There's no signature #" . $json_arr['Signature'], 1);
+        $signautre_data = $this->connection->query("SELECT vl_password FROM tb_signatures WHERE cd_signature = " . $json_arr['ID'])->fetch_array();
+        if($signautre_data['vl_password'] != $json_arr['Signature']) throw new SignatureAuthError("The file signature is not valid.", 1);
         return true;
     }
 
