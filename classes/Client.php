@@ -85,6 +85,8 @@ class Client{
         $data = $hdl_data->fastQuery(array("cd_client" => $client))[0];
         if($data["tk_client"] != $token) throw new LoginTokenError($client);
         // if it's a valid token does the login
+        $register = new ClientsAccessData(LPGP_CONF["mysql"]["sysuser"], LPGP_CONF["mysql"]["passwd"]);
+        $register->addRecord($client);
         $this->logged = true;
         $this->clientData = $data;
         $this->client = $client;
@@ -92,6 +94,7 @@ class Client{
         $this->token = $token;
         $this->proprietary = $hdl_prp->fastQuery(array("cd_proprietary" => $data["id_proprietary"]));
         $this->log_login($client);
+        unset($register);
     }
 
     /**
