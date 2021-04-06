@@ -117,6 +117,32 @@ class SignaturesData extends DatabaseConnection{
     }
 
     /**
+     * Returns the content of the signature encoded file in a string to be used
+     * with the API without downloading the signature file.
+     * @param int $signature The primary key reference of the selected signature
+     * @throws SignatureNotFound If the primary key isn't valid
+     * @return string
+     */
+    public function getEncodedSignature(int $signature): string{
+        $this->checkNotConnected();
+        if(!$this->checkSignatureExists($signature)) throw new SignatureNotFound("There's no signature #$signature !", 1);
+        $sig_dt = $this->connection->query("SELECT prop.nm_proprietary, sig.vl_password, sig.vl_code FROM tb_signatures as sig INNER JOIN tb_proprietaries AS prop ON prop.cd_proprietary = sig.id_proprietary WHERE sig.cd_signature = $signature;")->fetch_array();
+        $controller = new SignaturesController(CONTROL_FILE);
+        $dtk = $controller->generateDownloadToken();
+        $content = array(
+            "Date-Creation" => date(DEFAULT_DATETIME_F),
+            "Proprietary" => $sig_dt['nm_proprietary'],
+            "ID" => $signature_id,
+            "Signature" => $sig_dt['vl_password'],
+            "DToken" => $dtk
+        );
+        $to_json = json_encode($content);
+        $arr_ord = array();
+        for($char = 0; $char < strlen($to_json); $char++) array_push($arr_ord, "" . ord($to_json[$char]));
+        return implode(self::DELIMITER, $arr_ord);
+    }
+
+    /**
      * Creates a signature file and return it link to the file.
      *
      * @param string $signature_id The PK on the database.
