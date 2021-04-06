@@ -45,23 +45,20 @@ if(isset($_GET["client-key"])){
             die($errorHandler->throwError(2, $e->getMessage()));
         }
     }
+    if(!$cl_obj->isRoot()) die($errorHandler->throwError(1, "Only root clients can retrieve the encoded content of other client!"));
     $login_data = $cl_obj->getDatabaseAccess();
     // proceed to the other methods
     // CODE DOWN HERE vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     $cdo = new ClientsData($login_data[0], $login_data[1]);
     try{
         if(isset($_GET["id"])){
-            $data = $cdo->fastQuery(array("cd_client" => (int)$_GET["id"]));
-            die(json_encode($data[0]));
-        }
-        else if(isset($_GET["to-query"])){
-            $data = $cdo->fastQuery(json_decode($_GET["to-query"], true));
-            die(json_encode($data[0]));
+            $code = $cdo->getEncodedClient((int)$_GET["id"]);
+            die(json_encode(array("encoded" => $code)));
         }
         else
             die($errorHandler->throwError(3, "No client reference found"));
     }
-    catch(Exception $e){ die($errorHandler->throwError(3, $e->getMessage())); }
+    catch(Exception $e){ die($errorHandler->throwError(1, $e->getMessage())); }
 }
 else if(isset($_GET["info"])) die(json_encode(array(
     "Sysdone" => 0
